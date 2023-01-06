@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         ConnectionManager.getInstance();
+        System.out.println();
 
         Scanner input = new Scanner(System.in);
         System.out.println("Selamat datang di ATM Bank Java");
@@ -23,11 +24,15 @@ public class Main {
                 Silver silver = new Silver(username, password);
                 silver.authenticate();
                 silver.getCustomerData();
+//                silver.depositBalance(BigDecimal.valueOf(51_000_000));
                 silver.transferToAnotherBankAccount(2, BigDecimal.valueOf(200_000));
+//                silver.withdrawBalance(BigDecimal.valueOf(100_000));
             } else if (Objects.equals(customer.getAccountType(), "Gold")) {
                 Gold gold = new Gold(username, password);
                 gold.authenticate();
                 gold.getCustomerData();
+//                gold.transferToAnotherBankAccount(2, BigDecimal.valueOf(200_000));
+                gold.withdrawBalance(BigDecimal.valueOf(39_000));
             } else if (Objects.equals(customer.getAccountType(), "Platinum")) {
                 Platinum platinum = new Platinum(username, password);
                 platinum.authenticate();

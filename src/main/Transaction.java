@@ -2,7 +2,6 @@ package main;
 
 import java.math.BigDecimal;
 import java.sql.*;
-import java.text.SimpleDateFormat;
 
 public class Transaction {
     Integer transactionId;
@@ -13,7 +12,7 @@ public class Transaction {
     String transactionType;
     Boolean transactionStatus;
     String transactionMessage;
-    SimpleDateFormat sdf;
+    BigDecimal transactionAdminFee;
     Connection conn = ConnectionManager.getInstance().getConnection();
 
     public Transaction() {
@@ -43,12 +42,12 @@ public class Transaction {
         return idTransactionType;
     }
 
-    public void createTransaction(Integer transactionFor, Integer transactionFrom, BigDecimal transactionAmount, String transactionType, Boolean transactionStatus, String transactionMessage) {
+    public void createTransaction(Integer transactionFor, Integer transactionFrom, BigDecimal transactionAmount, String transactionType, Boolean transactionStatus, String transactionMessage, BigDecimal transactionAdminFee) {
         Integer idTransactionType = getIdTransactionType(transactionType);
         if (idTransactionType != null) {
             try {
                 PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO transaction_history (transaction_for, transaction_from, transaction_amount, transaction_type_id, transaction_status, transaction_message) VALUES (?, ?, ?, ?, ?, ?);",
+                        "INSERT INTO transaction_history (transaction_for, transaction_from, transaction_amount, transaction_type_id, transaction_status, transaction_message, transaction_admin_fee) VALUES (?, ?, ?, ?, ?, ?, ?);",
                         Statement.RETURN_GENERATED_KEYS
                 );
 
@@ -58,6 +57,7 @@ public class Transaction {
                 ps.setInt(4, idTransactionType);
                 ps.setBoolean(5, transactionStatus);
                 ps.setString(6, transactionMessage);
+                ps.setBigDecimal(7, transactionAdminFee);
 
                 int affectedRows = ps.executeUpdate();
 
@@ -83,7 +83,7 @@ public class Transaction {
 
     public void getTransactionData(Integer transactionId) {
         try {
-            PreparedStatement ps = conn.prepareStatement("SELECT th.id_transaction_history, th.transaction_date, th.transaction_for, th.transaction_from, th.transaction_amount, tt.transaction_type, th.transaction_status, th.transaction_message\n" +
+            PreparedStatement ps = conn.prepareStatement("SELECT th.id_transaction_history, th.transaction_date, th.transaction_for, th.transaction_from, th.transaction_amount, tt.transaction_type, th.transaction_status, th.transaction_message, th.transaction_admin_fee\n" +
                     "FROM transaction_history th, transaction_type tt\n" +
                     "WHERE id_transaction_history=? AND th.transaction_type_id=tt.id_transaction_type;"
             );
@@ -100,6 +100,7 @@ public class Transaction {
                 this.transactionType = rs.getString("transaction_type");
                 this.transactionStatus = rs.getBoolean("transaction_status");
                 this.transactionMessage = rs.getString("transaction_message");
+                this.transactionAdminFee = rs.getBigDecimal("transaction_admin_fee");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,5 +116,6 @@ public class Transaction {
         System.out.println(this.transactionType);
         System.out.println(this.transactionStatus);
         System.out.println(this.transactionMessage);
+        System.out.println(this.transactionAdminFee);
     }
 }
