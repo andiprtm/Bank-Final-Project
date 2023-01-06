@@ -11,7 +11,7 @@ public class ConnectionManager {
         try {
             // load driver
             System.out.println("Loading driver...");
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Loaded driver.");
 
             // setup connection with db

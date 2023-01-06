@@ -1,4 +1,6 @@
 package main;
+import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -15,9 +17,25 @@ public class Main {
         String role = input.nextLine();
 
         if (role.equals("customer")) {
-            Customer customer = new Customer(password, username);
+            Customer customer = new Customer(username, password);
             customer.authenticate();
-            System.out.println("Saldo saat ini: " + customer.getBalance());
+            if (Objects.equals(customer.getAccountType(), "Silver")) {
+                Silver silver = new Silver(username, password);
+                silver.authenticate();
+                silver.getCustomerData();
+                silver.transferToAnotherBankAccount(2, BigDecimal.valueOf(200_000));
+            } else if (Objects.equals(customer.getAccountType(), "Gold")) {
+                Gold gold = new Gold(username, password);
+                gold.authenticate();
+                gold.getCustomerData();
+            } else if (Objects.equals(customer.getAccountType(), "Platinum")) {
+                Platinum platinum = new Platinum(username, password);
+                platinum.authenticate();
+                platinum.getCustomerData();
+            }
+        } else if (role.equals("employee")){
+            Employee employee = new Employee(username, password);
+            employee.authenticate();
         }
 
     }
