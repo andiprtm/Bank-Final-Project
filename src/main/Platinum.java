@@ -39,38 +39,50 @@ public class Platinum extends Customer {
         }
     }
 
-    public void transferToAnotherBankAccount (Integer receiverCustomerId, BigDecimal amount) {
-        BigDecimal adminFeeTotal = amount.multiply(BigDecimal.valueOf(adminFee));
-        BigDecimal amountAfterAdminFee = amount.add(adminFeeTotal);
+    public void transferToAnotherBankAccount (String username, BigDecimal amount) {
+        Integer receiverCustomerId = getCustomerId(username);
+        Boolean isReceiverAccountActive = getIsActive(receiverCustomerId);
 
-        if (amountAfterAdminFee.compareTo(maximumTransfer) <= 0) {
+        if (receiverCustomerId != null && isReceiverAccountActive) {
 
-            BigDecimal remainingBalanceSender = super.getBalanceAfterSubtraction(super.customerId, amountAfterAdminFee);
-            BigDecimal remainingBalanceReceiver = super.getBalanceAfterAddition(receiverCustomerId, amountAfterAdminFee);
+            BigDecimal adminFeeTotal = amount.multiply(BigDecimal.valueOf(adminFee));
+            BigDecimal amountAfterAdminFee = amount.add(adminFeeTotal);
 
-            if (remainingBalanceSender.compareTo(BigDecimal.valueOf(0)) > 0 && remainingBalanceReceiver.compareTo(BigDecimal.valueOf(0)) > 0) {
+            if (amountAfterAdminFee.compareTo(maximumTransfer) <= 0) {
 
-                updateBalance(super.customerId, remainingBalanceSender);
-                updateBalance(receiverCustomerId, remainingBalanceReceiver);
-                Transaction transaction = new Transaction();
-                transaction.createTransaction(receiverCustomerId, super.customerId, amount, "Transfer", true, "Sukses melakukan transfer!", adminFeeTotal);
-                System.out.println("Berhasil melakukan transfer " + amount  + " dengan biaya admin sebesar " + adminFeeTotal + " ke rekening " + receiverCustomerId);
+                BigDecimal remainingBalanceSender = super.getBalanceAfterSubtraction(super.customerId, amountAfterAdminFee);
+                BigDecimal remainingBalanceReceiver = super.getBalanceAfterAddition(receiverCustomerId, amountAfterAdminFee);
 
-            } else if (remainingBalanceSender.compareTo(BigDecimal.valueOf(0)) < 0) {
+                if (remainingBalanceSender.compareTo(BigDecimal.valueOf(0)) > 0 && remainingBalanceReceiver.compareTo(BigDecimal.valueOf(0)) > 0) {
 
-                Transaction transaction = new Transaction();
-                transaction.createTransaction(receiverCustomerId, super.customerId, amount, "Transfer", false, "Saldo anda tidak cukup untuk melakukan transfer sebesar " + amount + " + biaya admin sebesar " + adminFeeTotal, adminFeeTotal);
-                System.out.println("Saldo anda tidak cukup untuk melakukan transfer sebesar " + amount + " + biaya admin sebesar " + adminFeeTotal);
+                    updateBalance(super.customerId, remainingBalanceSender);
+                    updateBalance(receiverCustomerId, remainingBalanceReceiver);
+                    Transaction transaction = new Transaction();
+                    transaction.createTransaction(receiverCustomerId, super.customerId, amount, "Transfer", true, "Sukses melakukan transfer!", adminFeeTotal);
+                    System.out.println("Berhasil melakukan transfer " + amount  + " dengan biaya admin sebesar " + adminFeeTotal + " ke rekening " + username);
 
-            } else if (remainingBalanceReceiver.compareTo(BigDecimal.valueOf(0)) < 0) {
+                } else if (remainingBalanceSender.compareTo(BigDecimal.valueOf(0)) < 0) {
 
-                Transaction transaction = new Transaction();
-                transaction.createTransaction(receiverCustomerId, super.customerId, amount, "Transfer", false, "Rekening penerima telah mencapai batas saldo!", adminFeeTotal);
-                System.out.println("Rekening penerima telah mencapai batas saldo!");
+                    Transaction transaction = new Transaction();
+                    transaction.createTransaction(receiverCustomerId, super.customerId, amount, "Transfer", false, "Saldo anda tidak cukup untuk melakukan transfer sebesar " + amount + " + biaya admin sebesar " + adminFeeTotal, adminFeeTotal);
+                    System.out.println("Saldo anda tidak cukup untuk melakukan transfer sebesar " + amount + " + biaya admin sebesar " + adminFeeTotal);
+
+                } else if (remainingBalanceReceiver.compareTo(BigDecimal.valueOf(0)) < 0) {
+
+                    Transaction transaction = new Transaction();
+                    transaction.createTransaction(receiverCustomerId, super.customerId, amount, "Transfer", false, "Rekening penerima telah mencapai batas saldo!", adminFeeTotal);
+                    System.out.println("Rekening penerima telah mencapai batas saldo!");
+
+                }
+            } else {
+
+                System.out.println("Maksimal transfer adalah " + this.maximumTransfer);
 
             }
         } else {
-            System.out.println("Maksimal transfer adalah " + this.maximumTransfer);
+
+            System.out.println("Username rekening tidak ditemukan atau rekening penerima tidak aktif!");
+
         }
     }
 
@@ -112,7 +124,7 @@ public class Platinum extends Customer {
             updateBalance(super.customerId, remainingBalance);
             Transaction transaction = new Transaction();
             transaction.createTransaction(super.customerId, super.customerId, amount, "Deposit", true, "Sukses melakukan deposit!", BigDecimal.valueOf(0));
-            System.out.println("Sukses melakukan deposit sejumlah " + remainingBalance);
+            System.out.println("Sukses melakukan deposit sejumlah " + amount);
 
         } else {
 

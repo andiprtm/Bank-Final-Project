@@ -52,8 +52,6 @@ public class Customer {
 
             if (this.isActive) {
                 System.out.println("Selamat datang Customer " + this.name + "!");
-            } else {
-                System.out.println("Akun anda tidak aktif!");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -148,5 +146,47 @@ public class Customer {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Integer getCustomerId(String username) {
+        Integer customerId = null;
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "SELECT cl.customer_id FROM customer_login cl WHERE cl.username=?;"
+            );
+
+            ps.setString(1, username);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                customerId = rs.getInt("customer_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return customerId;
+    }
+
+    public Boolean getIsActive(Integer customerId) {
+        Boolean isActive = null;
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "SELECT cba.customer_is_active FROM customer_bank_account cba WHERE cba.customer_id=?;"
+            );
+
+            ps.setInt(1, customerId);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                isActive = rs.getBoolean("customer_is_active");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isActive;
     }
 }
