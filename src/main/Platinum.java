@@ -16,7 +16,19 @@ public class Platinum extends Customer {
 
     public Platinum(String username, String password) {
         super(username, password);
+        getAccountTypeLimitation();
+    }
 
+    public Platinum(String username) {
+        super(username);
+        getAccountTypeLimitation();
+    }
+
+    public Platinum(String accountType, String username, String password, String name, String address, String phone, BigDecimal accountBalance, Integer pin) {
+        super(accountType, username, password, name, address, phone, accountBalance, pin);
+    }
+
+    public void getAccountTypeLimitation() {
         try {
             PreparedStatement ps = conn.prepareStatement(
                     "SELECT cat.max_transfer_limit, cat.max_balance_limit, cat.max_deposit_limit, cat.max_withdraw_limit, cat.admin_fee\n" +

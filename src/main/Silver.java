@@ -16,7 +16,19 @@ public class Silver extends Customer {
 
     public Silver(String username, String password) {
         super(username, password);
+        getAccountTypeLimitation();
+    }
 
+    public Silver(String username) {
+        super(username);
+        getAccountTypeLimitation();
+    }
+
+    public Silver(String accountType, String username, String password, String name, String address, String phone, BigDecimal accountBalance, Integer pin) {
+        super(accountType, username, password, name, address, phone, accountBalance, pin);
+    }
+
+    public void getAccountTypeLimitation() {
         try {
             PreparedStatement ps = conn.prepareStatement(
                     "SELECT cat.max_transfer_limit, cat.max_balance_limit, cat.max_deposit_limit, cat.max_withdraw_limit, cat.admin_fee\n" +

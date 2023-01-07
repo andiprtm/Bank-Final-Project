@@ -16,7 +16,19 @@ public class Gold extends Customer {
 
     public Gold(String username, String password) {
         super(username, password);
+        getAccountTypeLimitation();
+    }
 
+    public Gold(String username) {
+        super(username);
+        getAccountTypeLimitation();
+    }
+
+    public Gold(String accountType, String username, String password, String name, String address, String phone, BigDecimal accountBalance, Integer pin) {
+        super(accountType, username, password, name, address, phone, accountBalance, pin);
+    }
+
+    public void getAccountTypeLimitation () {
         try {
             PreparedStatement ps = conn.prepareStatement(
                     "SELECT cat.max_transfer_limit, cat.max_balance_limit, cat.max_deposit_limit, cat.max_withdraw_limit, cat.admin_fee\n" +

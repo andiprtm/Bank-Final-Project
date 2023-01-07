@@ -62,7 +62,7 @@ public class Transaction {
                 int affectedRows = ps.executeUpdate();
 
                 if (affectedRows == 0) {
-                    throw new SQLException("Creating user failed, no rows affected.");
+                    throw new SQLException("Gagal menambahkan data!");
                 }
 
                 try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
@@ -70,7 +70,7 @@ public class Transaction {
                         getTransactionData(generatedKeys.getInt(1));
                     }
                     else {
-                        throw new SQLException("Creating user failed, no ID obtained.");
+                        throw new SQLException("Gagal mendapatkan id!");
                     }
                 }
             } catch (SQLException e) {

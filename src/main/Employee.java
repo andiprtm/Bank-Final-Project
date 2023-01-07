@@ -21,9 +21,7 @@ public class Employee {
         this.password = password;
     }
 
-//    public createCustomerBankAccount()
-
-    private void getEmployeeData(){
+    public void getEmployeeData(){
         try {
             PreparedStatement ps = conn.prepareStatement(
                     "SELECT DISTINCT ed.name, ed.phone, ed.address, ed.employee_is_active,\n" +
@@ -42,6 +40,10 @@ public class Employee {
                 this.phone = rs.getString("phone");
                 this.isActive = rs.getBoolean("employee_is_active");
             }
+
+            if (this.isActive) {
+                System.out.println("Selamat datang Employee " + this.name + "!");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,9 +52,9 @@ public class Employee {
     public void authenticate() {
         try {
             PreparedStatement ps = conn.prepareStatement(
-                    "SELECT el.employee_id, ed.employee_is_active\n" +
-                            "FROM employee_login el, employee_data ed\n" +
-                            "WHERE username=? AND password=? AND el.employee_id=ed.id_employee;"
+                    "SELECT el.employee_id, ed.employee_is_active, eat.employee_account_type\n" +
+                            "FROM employee_login el, employee_data ed, employee_account_type eat\n" +
+                            "WHERE username=? AND password=? AND el.employee_id=ed.id_employee AND ed.employee_account_type_id=eat.id_employee_account_type;"
             );
 
             ps.setString(1, this.username);
@@ -62,13 +64,7 @@ public class Employee {
             while (rs.next()) {
                 this.employeeId = rs.getInt("employee_id");
                 this.isActive = rs.getBoolean("employee_is_active");
-            }
-
-            if (this.isActive) {
-                getEmployeeData();
-                System.out.println("Selamat datang Employee " + this.name + "!");
-            } else {
-                System.out.println("Akun anda tidak aktif!");
+                this.accountType = rs.getString("employee_account_type");
             }
         } catch (SQLException e) {
             e.printStackTrace();
